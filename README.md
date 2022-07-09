@@ -67,13 +67,13 @@ you can set how deep (print temp) the print is, get battery level, see machine s
 I don't have any hardware debug tools on my hand, so all info in this project is from
 the internet and the following projects:
 
-[ampatspell/paperang](https://github.com/ampatspell/paperang): Invoke paperang
++ [ampatspell/paperang](https://github.com/ampatspell/paperang): Invoke paperang
 in NodeJS using webUSB, not working, but useful.
-[tinyprinter/python-paperang](https://github.com/tinyprinter/python-paperang): Invoke
++ [tinyprinter/python-paperang](https://github.com/tinyprinter/python-paperang): Invoke
 paperang in Python through bluetooth, I don't like python, but the info is every useful.
-[喵喵机折腾记](https://www.ihcblog.com/miaomiaoji/): A Chinese blog post gives the info
++ [喵喵机折腾记](https://www.ihcblog.com/miaomiaoji/): A Chinese blog post gives the info
 about the packet format.
-[Taking a ride on the Universal Serial Bus](https://maff.scot/2019/10/taking-a-ride-on-the-universal-serial-bus/):
++ [Taking a ride on the Universal Serial Bus](https://maff.scot/2019/10/taking-a-ride-on-the-universal-serial-bus/):
 An English blog post about invoking P1 using USB.
 
 Thanks to all of those references! I can't build this project without them.
