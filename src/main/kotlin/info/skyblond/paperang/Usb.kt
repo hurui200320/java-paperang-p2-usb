@@ -55,7 +55,7 @@ fun Int.toLittleEndian(): ByteArray {
 }
 
 // TODO cmd list?
-fun makePackage(cmd: Byte, packetRemainCount: Byte, data: ByteArray = ByteArray(0)): ByteArray {
+fun makePackage(cmd: Byte, packetRemainCount: UByte, data: ByteArray = ByteArray(0)): ByteArray {
     val crc = CRC32().let {
         it.reset(0x35769521L and 0xffffffffL)
         it.update(data, 0, data.size)
@@ -68,7 +68,7 @@ fun makePackage(cmd: Byte, packetRemainCount: Byte, data: ByteArray = ByteArray(
     // 0x10: cmd
     payload[p++] = cmd
     // 0x00: packet remain count: 0 means no more packet, this is the last one
-    payload[p++] = packetRemainCount
+    payload[p++] = packetRemainCount.toByte()
     // 0x00, 0x00: data length in little endian
     check(data.size < Short.MAX_VALUE) { "Data is too big" }
     val dataLengthBytes = data.size.toShort().toLittleEndian()
@@ -96,8 +96,8 @@ fun toShort(lb: Byte, hb: Byte): Short {
     return (result and 0xffff).toShort()
 }
 
-fun readPackages(payload: ByteArray): List<Triple<Byte, Byte, ByteArray>> {
-    val result = mutableListOf<Triple<Byte, Byte, ByteArray>>()
+fun readPackages(payload: ByteArray): List<Triple<Byte, UByte, ByteArray>> {
+    val result = mutableListOf<Triple<Byte, UByte, ByteArray>>()
     var p = 0
     while (true) {
         // 02: start
@@ -111,7 +111,7 @@ fun readPackages(payload: ByteArray): List<Triple<Byte, Byte, ByteArray>> {
             return result
 
         val command = payload[p++]
-        val packetIndex = payload[p++]
+        val packetIndex = payload[p++].toUByte()
         val dataLength = toShort(payload[p], payload[p + 1]).toInt()
         p += 2
         val data = ByteArray(dataLength).also {

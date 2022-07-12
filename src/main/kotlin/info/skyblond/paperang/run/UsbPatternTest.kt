@@ -1,19 +1,18 @@
-package info.skyblond.paperang
+package info.skyblond.paperang.run
 
+import info.skyblond.paperang.*
 import javax.usb.*
 import kotlin.random.Random
 
-
-
 private fun printBlock(inPipe: UsbPipe, outPipe: UsbPipe, block: (UsbPipe, UsbPipe) -> Unit) {
     // sent paper type - normal paper
-    sendPacket(inPipe, outPipe, makePackage(44, 0x00, byteArrayOf(0x00)))
+    sendPacket(inPipe, outPipe, makePackage(44, 0x00u, byteArrayOf(0x00)))
     // feed space
-    sendPacket(inPipe, outPipe, makePackage(26, 0x00, (20).toLittleEndian()))
+    sendPacket(inPipe, outPipe, makePackage(26, 0x00u, (20).toLittleEndian()))
     // do the logic
     block.invoke(inPipe, outPipe)
     // feed space
-    sendPacket(inPipe, outPipe, makePackage(26, 0x00, (250).toLittleEndian()))
+    sendPacket(inPipe, outPipe, makePackage(26, 0x00u, (250).toLittleEndian()))
 }
 
 fun main() {
@@ -48,6 +47,10 @@ fun main() {
         inPipe.open()
         outPipe.open()
         try {
+            // print a test page
+            printBlock(inPipe, outPipe) { inp, outp ->
+                sendPacket(inp, outp, makePackage(27, 0u, byteArrayOf()), true)
+            }
             // test line length:
             // we got 9 vertical line -> 9*8 = 72 bytes per line
             // max data length is 1023. 1024 will result in empty
@@ -58,7 +61,7 @@ fun main() {
                 }
                 // here we print on aligned column, by counting the column and multiply by 8
                 // we got the line length
-                sendPacket(inp, outp, makePackage(0, 0, data), false)
+                sendPacket(inp, outp, makePackage(0, 0u, data), false)
             }
             // verify column
             printBlock(inPipe, outPipe) { inp, outp ->
@@ -67,7 +70,7 @@ fun main() {
                 }
                 // here we print on 10101010 on the first column
                 // if we see 4 black column, it means 1 bit = 1 column
-                sendPacket(inp, outp, makePackage(0, 0, data), false)
+                sendPacket(inp, outp, makePackage(0, 0u, data), false)
             }
             // verify row
             printBlock(inPipe, outPipe) { inp, outp ->
@@ -79,12 +82,12 @@ fun main() {
                 }
                 // here we print on black/white lines
                 // if we see 7 black row, it means 1 bit = 1 line
-                sendPacket(inp, outp, makePackage(0, 0, data), false)
+                sendPacket(inp, outp, makePackage(0, 0u, data), false)
             }
             // print some random data
             printBlock(inPipe, outPipe) { inp, outp ->
                 for (i in 16 downTo 0) {
-                    sendPacket(inp, outp, makePackage(0, i.toByte(), Random.nextBytes(1008)), false)
+                    sendPacket(inp, outp, makePackage(0, i.toUByte(), Random.nextBytes(1008)), false)
                 }
             }
         } finally {
